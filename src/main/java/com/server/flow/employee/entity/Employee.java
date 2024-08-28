@@ -3,14 +3,18 @@ package com.server.flow.employee.entity;
 import java.time.LocalDate;
 
 import com.server.flow.common.entity.BaseTimeEntity;
+import com.server.flow.employee.entity.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,11 +48,14 @@ public class Employee extends BaseTimeEntity {
 
 	private LocalDate joinDate;
 
-	@OneToOne
+	@Enumerated(EnumType.STRING)
+	private Role role;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "department_id")
 	private Department department;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "position_id")
 	private Position position;
 }
