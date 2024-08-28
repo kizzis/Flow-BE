@@ -1,10 +1,8 @@
 package com.server.flow.auth.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.flow.auth.cookie.CookieProcessor;
@@ -23,7 +21,6 @@ public class LoginController {
 	private final CookieProcessor cookieProcessor;
 
 	@PostMapping("/api/login")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<String> login(
 		@Valid @RequestBody LoginRequest request,
 		HttpServletResponse response
