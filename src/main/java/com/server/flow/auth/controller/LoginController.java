@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.flow.auth.service.AuthService;
-import com.server.flow.auth.service.TokenService;
+import com.server.flow.auth.cookie.CookieProcessor;
+import com.server.flow.auth.jwt.service.dto.AuthResponse;
+import com.server.flow.auth.service.LoginService;
 import com.server.flow.auth.service.dto.LoginRequest;
-import com.server.flow.employee.entity.Employee;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -18,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
-	private final AuthService authService;
-	private final TokenService tokenService;
+public class LoginController {
+	private final LoginService loginService;
+	private final CookieProcessor cookieProcessor;
 
 	@PostMapping("/api/login")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -28,8 +28,8 @@ public class AuthController {
 		@Valid @RequestBody LoginRequest request,
 		HttpServletResponse response
 	) {
-		Employee employee = authService.login(request);
-		//AuthResponse authResponse = tokenService.generateToken(employee);
+		AuthResponse auth = loginService.login(request);
+		cookieProcessor.addCookies(response, auth.accessToken(), auth.refreshToken());
 		return ResponseEntity.ok("로그인이 완료되었습니다.");
 	}
 }
