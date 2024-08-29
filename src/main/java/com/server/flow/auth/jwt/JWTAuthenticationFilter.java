@@ -28,8 +28,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 	private static final String[] WHITELIST = {
 		"/css/*",
 		"/js/*",
-		"/images/*",
-		"/api/login"
+		"/images/*"
 	};
 	private final JwtTokenProcessor jwtTokenProcessor;
 	private final CookieProcessor cookieProcessor;
