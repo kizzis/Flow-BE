@@ -10,4 +10,6 @@ public class AuthConstants {
 	public static final String CORS_WILDCARD = "*";
 	public static final String CORS_TRUE = "true";
 	public static final String ROLE = "role";
+	public static final String ROLE_ = "ROLE_";
+
 }
