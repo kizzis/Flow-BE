@@ -41,9 +41,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws ServletException, IOException {
-		response.addHeader(AuthConstants.CORS_ALLOW_METHODS_HEADER, AuthConstants.CORS_WILDCARD);
-		response.addHeader(AuthConstants.CORS_ALLOW_CREDENTIALS_HEADER, AuthConstants.CORS_TRUE);
-
 		if (isMatchedWhiteList(request.getRequestURI())) {
 			filterChain.doFilter(request, response);
 			return;
