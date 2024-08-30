@@ -9,6 +9,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.flow.common.constants.CommonConstants;
+import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.common.response.ApiResponse;
 
 import jakarta.servlet.ServletException;
@@ -29,11 +31,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		HttpServletResponse response,
 		AccessDeniedException accessDeniedException
 	) throws IOException, ServletException {
-		log.error("No Authorities", accessDeniedException);
-		log.error("Request Uri : {}", request.getRequestURI());
+		log.error(ExceptionConstants.NOT_AUTHORIZED_MESSAGE, accessDeniedException);
+		log.error(CommonConstants.REQUEST_URI_MESSAGE, request.getRequestURI());
 
 		ApiResponse<String> apiResponse = ApiResponse.errorWithException(
-			"==> Forbidden user: " + accessDeniedException.getMessage());
+			ExceptionConstants.FORBIDDEN_USER_MESSAGE + accessDeniedException.getMessage()
+		);
+
 		String responseBody = objectMapper.writeValueAsString(apiResponse);
 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

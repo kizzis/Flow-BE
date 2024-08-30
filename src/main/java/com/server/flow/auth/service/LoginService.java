@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.server.flow.auth.jwt.service.TokenService;
 import com.server.flow.auth.jwt.service.dto.AuthResponse;
 import com.server.flow.auth.service.dto.LoginRequest;
+import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.employee.entity.Employee;
 import com.server.flow.employee.repository.EmployeeRepository;
 
@@ -19,10 +20,10 @@ public class LoginService {
 
 	public AuthResponse login(@Valid LoginRequest request) {
 		Employee employee = employeeRepository.findByEmployeeNumber(request.employeeNumber())
-			.orElseThrow(() -> new IllegalArgumentException("사원으로 등록되어 있지 않습니다."));
-		
+			.orElseThrow(() -> new IllegalArgumentException(ExceptionConstants.UNREGISTERED_EMPLOYEE_MESSAGE));
+
 		if (!request.password().equals(employee.getPassword())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+			throw new IllegalArgumentException(ExceptionConstants.MISMATCH_PASSWORD_MESSAGE);
 		}
 
 		return tokenService.generateToken(employee);

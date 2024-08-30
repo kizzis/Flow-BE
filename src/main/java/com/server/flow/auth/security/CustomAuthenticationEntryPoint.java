@@ -9,6 +9,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.flow.common.constants.CommonConstants;
+import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.common.response.ApiResponse;
 
 import jakarta.servlet.ServletException;
@@ -29,11 +31,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		HttpServletResponse response,
 		AuthenticationException authException
 	) throws IOException, ServletException {
-		log.error("==> Not Authenticated Request", authException);
-		log.error("==> Request uri: {}", request.getRequestURI());
+		log.error(ExceptionConstants.NOT_AUTHENTICATED_MESSAGE, authException);
+		log.error(CommonConstants.REQUEST_URI_MESSAGE, request.getRequestURI());
 
 		ApiResponse<String> apiResponse = ApiResponse.errorWithException(
-			"Unauthorized user: " + authException.getMessage());
+			ExceptionConstants.UNAUTHORIZED_USER_MESSAGE + authException.getMessage()
+		);
 
 		String responseBody = objectMapper.writeValueAsString(apiResponse);
 

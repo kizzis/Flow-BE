@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.server.flow.auth.jwt.dto.JwtPayloadResponse;
 import com.server.flow.common.constants.AuthConstants;
+import com.server.flow.common.constants.TokenConstants;
 import com.server.flow.employee.entity.Employee;
 import com.server.flow.employee.entity.enums.Role;
 
@@ -32,13 +33,13 @@ public class JwtTokenProcessor {
 
 	public String generateAccessToken(Employee employee) {
 		String jwt = generateToken(employee, TokenType.ACCESS);
-		log.info("==> generated access token: {}", jwt);
+		log.info(TokenConstants.GENERATED_TOKEN_MESSAGE, jwt);
 		return jwt;
 	}
 
 	public String generateRefreshToken(Employee employee) {
 		String jwt = generateToken(employee, TokenType.ACCESS);
-		log.info("==> generated refresh token: {}", jwt);
+		log.info(TokenConstants.GENERATED_TOKEN_MESSAGE, jwt);
 		return jwt;
 	}
 
@@ -46,7 +47,7 @@ public class JwtTokenProcessor {
 		if (jwtToken != null && !jwtToken.isBlank() && verifyToken(jwtToken)) {
 			return extractPayload(jwtToken);
 		}
-		throw new IllegalArgumentException("==> Invalid JWT token. Employee Information cannot be extracted");
+		throw new IllegalArgumentException(TokenConstants.INVALID_TOKEN_ERROR_MESSAGE);
 	}
 
 	public boolean verifyToken(String token) {
@@ -54,15 +55,15 @@ public class JwtTokenProcessor {
 			getJwtParser().parseClaimsJws(token);
 			return true;
 		} catch (ExpiredJwtException e) {
-			log.info("==> Expired JWT Token : {}", token, e);
+			log.info(TokenConstants.EXPIRED_TOKEN_ERROR_MESSAGE, token, e);
 		} catch (UnsupportedJwtException e) {
-			log.info("==> Unsupported JWT Token: {}", token, e);
+			log.info(TokenConstants.UNSUPPORTED_TOKEN_ERROR_MESSAGE, token, e);
 		} catch (MalformedJwtException e) {
-			log.info("==> Malformed JWT Token: {}", token, e);
+			log.info(TokenConstants.MALFORMED_TOKEN_ERROR_MESSAGE, token, e);
 		} catch (SignatureException e) {
-			log.info("==> Incorrect Signature JWT Token: {}", token, e);
+			log.info(TokenConstants.INCORRECT_SIGNATURE_TOKEN_ERROR_MESSAGE, token, e);
 		} catch (IllegalArgumentException e) {
-			log.info("==> JWT claims is empty: {}", token, e);
+			log.info(TokenConstants.EMPTY__TOKEN_ERROR_MESSAGE, token, e);
 		}
 		return false;
 	}
@@ -101,7 +102,7 @@ public class JwtTokenProcessor {
 			.getBody();
 
 		Long employeeId = claims.get(AuthConstants.EMPLOYEE_ID, Long.class);
-		String employeeNumber = claims.get("employeeNumber", String.class);
+		String employeeNumber = claims.get(AuthConstants.EMPLOYEE_NUMBER, String.class);
 		String roleType = claims.get(AuthConstants.ROLE, String.class);
 		Role role = Role.valueOf(roleType);
 
