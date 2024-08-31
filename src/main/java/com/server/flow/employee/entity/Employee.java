@@ -71,5 +71,6 @@ public class Employee extends BaseTimeEntity {
 		this.password = encodedPassword;
 		this.department = department;
 		this.position = position;
+		this.role = Role.EMPLOYEE;
 	}
 }
