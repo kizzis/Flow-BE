@@ -58,4 +58,8 @@ public class Employee extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "position_id")
 	private Position position;
+
+	public void changePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
 }
