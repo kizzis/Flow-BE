@@ -3,7 +3,9 @@ package com.server.flow.employee.entity;
 import java.time.LocalDate;
 
 import com.server.flow.common.entity.BaseTimeEntity;
+import com.server.flow.department.entity.Department;
 import com.server.flow.employee.entity.enums.Role;
+import com.server.flow.position.entity.Position;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,12 +22,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class Employee extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,4 +62,14 @@ public class Employee extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "position_id")
 	private Position position;
+
+	public void addEmployeeInfo(
+		String encodedPassword,
+		Department department,
+		Position position
+	) {
+		this.password = encodedPassword;
+		this.department = department;
+		this.position = position;
+	}
 }
