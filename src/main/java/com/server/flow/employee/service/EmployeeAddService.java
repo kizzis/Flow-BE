@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.department.entity.Department;
 import com.server.flow.department.service.DepartmentAddService;
 import com.server.flow.employee.entity.Employee;
@@ -40,7 +41,7 @@ public class EmployeeAddService {
 
 	private void validateEmployeeNumber(String employeeNumber) {
 		if (employeeRepository.existsByEmployeeNumber(employeeNumber)) {
-			throw new IllegalArgumentException("이미 추가된 사원입니다.");
+			throw new IllegalArgumentException(ExceptionConstants.ALREADY_EXISTED_EMPLOYEE_MESSAGE);
 		}
 	}
 }
