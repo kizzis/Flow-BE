@@ -1,9 +1,7 @@
 package com.server.flow.employee.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +28,7 @@ public class EmployeeSearchService {
 	}
 
 	public EmployeeOverviews searchEmployees(Pageable pageable) {
-		Pageable pageRequest = PageRequest.of(
-			pageable.getPageNumber(),
-			pageable.getPageSize(),
-			Sort.by(Sort.Direction.DESC, "createdAt")
-		);
-
-		Page<Employee> page = employeeRepository.findAll(pageRequest);
+		Page<Employee> page = employeeRepository.findAll(pageable);
 
 		Page<EmployeeOverview> employeeOverviews = page.map(
 			employee -> EmployeeOverview.of(

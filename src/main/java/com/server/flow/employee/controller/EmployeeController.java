@@ -1,6 +1,7 @@
 package com.server.flow.employee.controller;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +49,7 @@ public class EmployeeController {
 
 	@GetMapping("/api/admin/employees")
 	public ApiResponse<EmployeeOverviews> searchAllEmployee(
-		@PageableDefault(size = 15) Pageable pageable
+		@PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		EmployeeOverviews employeeOverviews = employeeSearchService.searchEmployees(pageable);
 		return ApiResponse.success(employeeOverviews, EmployeeConstants.ALL_EMPLOYEES_SEARCH_COMPLETED_MESSAGE);
