@@ -1,5 +1,7 @@
 package com.server.flow.employee.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,7 @@ import com.server.flow.employee.service.EmployeeSearchService;
 import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.employee.service.dto.response.EmployeeDetailResponse;
 import com.server.flow.employee.service.dto.response.EmployeeIdResponse;
-import com.server.flow.employee.service.dto.response.EmployeesResponse;
+import com.server.flow.employee.service.dto.response.EmployeeOverviews;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +46,11 @@ public class EmployeeController {
 		return ApiResponse.success(employeeDetailResponse, EmployeeConstants.EMPLOYEE_SEARCH_COMPLETED_MESSAGE);
 	}
 
-	// todo. 전체 구성원 조회 API 개발 + offset 기반 pagination
-	public ApiResponse<EmployeesResponse> searchAllEmployee() {
-		return null;
+	@GetMapping("/api/admin/employees")
+	public ApiResponse<EmployeeOverviews> searchAllEmployee(
+		@PageableDefault(size = 15) Pageable pageable
+	) {
+		EmployeeOverviews employeeOverviews = employeeSearchService.searchEmployees(pageable);
+		return ApiResponse.success(employeeOverviews, EmployeeConstants.ALL_EMPLOYEES_SEARCH_COMPLETED_MESSAGE);
 	}
 }
