@@ -51,4 +51,8 @@ public class PrincipalDetails implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+
+	public Long getEmployeeId() {
+		return employee.getId();
+	}
 }
