@@ -2,8 +2,8 @@ package com.server.flow.employee.service.dto.response;
 
 import java.util.List;
 
-public record EmployeeOverviews(
-	List<EmployeeOverview> employeeOverviews,
+public record EmployeeOverviewsResponse(
+	List<EmployeeOverviewResponse> employeeOverviewResponse,
 	int currentPageNumber,
 	long totalElements,
 	long remainingDataCount,
@@ -11,8 +11,8 @@ public record EmployeeOverviews(
 	boolean hasPrevious,
 	boolean hasNext
 ) {
-	public static EmployeeOverviews from(
-		List<EmployeeOverview> employeeOverviews,
+	public static EmployeeOverviewsResponse from(
+		List<EmployeeOverviewResponse> employeeOverviewResponse,
 		int currentPageNumber,
 		long totalElements,
 		long remainingDataCount,
@@ -20,8 +20,8 @@ public record EmployeeOverviews(
 		boolean hasPrevious,
 		boolean hasNext
 	) {
-		return new EmployeeOverviews(
-			employeeOverviews,
+		return new EmployeeOverviewsResponse(
+			employeeOverviewResponse,
 			currentPageNumber,
 			totalElements,
 			remainingDataCount,

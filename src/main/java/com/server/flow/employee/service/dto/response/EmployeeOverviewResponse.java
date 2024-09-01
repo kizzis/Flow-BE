@@ -3,7 +3,7 @@ package com.server.flow.employee.service.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
-public record EmployeeOverview(
+public record EmployeeOverviewResponse(
 	Long employeeId,
 	String employeeNumber,
 	String name,
@@ -12,7 +12,7 @@ public record EmployeeOverview(
 	LocalDate joinDate,
 	List<String> role
 ) {
-	public static EmployeeOverview of(
+	public static EmployeeOverviewResponse of(
 		Long employeeId,
 		String employeeNumber,
 		String name,
@@ -21,7 +21,7 @@ public record EmployeeOverview(
 		LocalDate joinDate,
 		String role
 	) {
-		return new EmployeeOverview(
+		return new EmployeeOverviewResponse(
 			employeeId,
 			employeeNumber,
 			name,

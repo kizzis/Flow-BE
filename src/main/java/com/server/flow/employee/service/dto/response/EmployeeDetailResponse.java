@@ -2,9 +2,9 @@ package com.server.flow.employee.service.dto.response;
 
 import com.server.flow.employee.entity.Employee;
 
-public record EmployeeDetailResponse(EmployeeOverview employeeOverview) {
+public record EmployeeDetailResponse(EmployeeOverviewResponse employeeOverviewResponse) {
 	public static EmployeeDetailResponse from(Employee employee) {
-		EmployeeOverview employeeOverviewDto = EmployeeOverview.of(
+		EmployeeOverviewResponse employeeOverviewResponse = EmployeeOverviewResponse.of(
 			employee.getId(),
 			employee.getEmployeeNumber(),
 			employee.getName(),
@@ -14,6 +14,6 @@ public record EmployeeDetailResponse(EmployeeOverview employeeOverview) {
 			employee.getRole().toString()
 		);
 
-		return new EmployeeDetailResponse(employeeOverviewDto);
+		return new EmployeeDetailResponse(employeeOverviewResponse);
 	}
 }
