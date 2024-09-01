@@ -1,5 +1,8 @@
 package com.server.flow.employee.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +12,7 @@ import com.server.flow.department.entity.Department;
 import com.server.flow.department.service.DepartmentAddService;
 import com.server.flow.employee.entity.Employee;
 import com.server.flow.employee.repository.EmployeeRepository;
-import com.server.flow.employee.service.dto.AddEmployeeRequest;
+import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.position.entity.Position;
 import com.server.flow.position.service.PositionAddService;
 
@@ -27,7 +30,7 @@ public class EmployeeAddService {
 	public void addEmployee(AddEmployeeRequest request) {
 		validateEmployeeNumber(request.employeeNumber());
 
-		String encodedPassword = passwordEncoder.encode(request.joinDate().toString());
+		String encodedPassword = passwordEncoder.encode(formatJointDateToString(request.joinDate()));
 
 		Department department = departmentAddService.getAndCreateDepartment(request.department());
 
@@ -43,5 +46,10 @@ public class EmployeeAddService {
 		if (employeeRepository.existsByEmployeeNumber(employeeNumber)) {
 			throw new IllegalArgumentException(ExceptionConstants.ALREADY_EXISTED_EMPLOYEE_MESSAGE);
 		}
+	}
+
+	private String formatJointDateToString(LocalDate joinDate) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		return joinDate.format(formatter);
 	}
 }
