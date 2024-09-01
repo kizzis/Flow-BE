@@ -9,8 +9,8 @@ import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.employee.entity.Employee;
 import com.server.flow.employee.repository.EmployeeRepository;
 import com.server.flow.employee.service.dto.response.EmployeeDetailResponse;
-import com.server.flow.employee.service.dto.response.EmployeeOverview;
-import com.server.flow.employee.service.dto.response.EmployeeOverviews;
+import com.server.flow.employee.service.dto.response.EmployeeOverviewResponse;
+import com.server.flow.employee.service.dto.response.EmployeeOverviewsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,18 +20,18 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeSearchService {
 	private final EmployeeRepository employeeRepository;
 
-	public EmployeeDetailResponse searchEmployee(Long employeeId) {
-		Employee foundEmployee = employeeRepository.findById(employeeId)
+	public EmployeeDetailResponse searchEmployee(String name) {
+		Employee foundEmployee = employeeRepository.findByName(name)
 			.orElseThrow(() -> new IllegalArgumentException(ExceptionConstants.NOT_EXISTED_EMPLOYEE_MESSAGE));
 
-		return EmployeeDetailResponse.from(foundEmployee); // todo
+		return EmployeeDetailResponse.from(foundEmployee);
 	}
 
-	public EmployeeOverviews searchEmployees(Pageable pageable) {
+	public EmployeeOverviewsResponse searchEmployees(Pageable pageable) {
 		Page<Employee> page = employeeRepository.findAll(pageable);
 
-		Page<EmployeeOverview> employeeOverviews = page.map(
-			employee -> EmployeeOverview.of(
+		Page<EmployeeOverviewResponse> employeeOverviews = page.map(
+			employee -> EmployeeOverviewResponse.of(
 				employee.getId(),
 				employee.getEmployeeNumber(),
 				employee.getName(),
@@ -41,7 +41,7 @@ public class EmployeeSearchService {
 				employee.getRole().getValue()
 			));
 
-		return EmployeeOverviews.from(
+		return EmployeeOverviewsResponse.from(
 			employeeOverviews.getContent(),
 			page.getNumber(),
 			page.getTotalElements(),

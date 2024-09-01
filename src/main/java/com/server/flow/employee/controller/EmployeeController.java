@@ -4,9 +4,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.flow.auth.security.EmployeeAuthorizationUtil;
@@ -17,7 +17,7 @@ import com.server.flow.employee.service.EmployeeSearchService;
 import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.employee.service.dto.response.EmployeeDetailResponse;
 import com.server.flow.employee.service.dto.response.EmployeeIdResponse;
-import com.server.flow.employee.service.dto.response.EmployeeOverviews;
+import com.server.flow.employee.service.dto.response.EmployeeOverviewsResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,17 +41,17 @@ public class EmployeeController {
 			EmployeeConstants.EMPLOYEEID_SUCCESS_COMPLETED_MESSAGE);
 	}
 
-	@GetMapping("/api/admin/employees/{employeeId}")
-	public ApiResponse<EmployeeDetailResponse> searchEmployee(@PathVariable Long employeeId) {
-		EmployeeDetailResponse employeeDetailResponse = employeeSearchService.searchEmployee(employeeId);
+	@GetMapping("/api/admin/employees/search")
+	public ApiResponse<EmployeeDetailResponse> searchEmployee(@RequestParam String name) {
+		EmployeeDetailResponse employeeDetailResponse = employeeSearchService.searchEmployee(name);
 		return ApiResponse.success(employeeDetailResponse, EmployeeConstants.EMPLOYEE_SEARCH_COMPLETED_MESSAGE);
 	}
 
 	@GetMapping("/api/admin/employees")
-	public ApiResponse<EmployeeOverviews> searchAllEmployee(
+	public ApiResponse<EmployeeOverviewsResponse> searchPagedEmployees(
 		@PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
-		EmployeeOverviews employeeOverviews = employeeSearchService.searchEmployees(pageable);
-		return ApiResponse.success(employeeOverviews, EmployeeConstants.ALL_EMPLOYEES_SEARCH_COMPLETED_MESSAGE);
+		EmployeeOverviewsResponse employeeOverviewsResponse = employeeSearchService.searchEmployees(pageable);
+		return ApiResponse.success(employeeOverviewsResponse, EmployeeConstants.ALL_EMPLOYEES_SEARCH_COMPLETED_MESSAGE);
 	}
 }
