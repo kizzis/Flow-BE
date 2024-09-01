@@ -1,4 +1,4 @@
-package com.server.flow.employee.service.dto;
+package com.server.flow.employee.service.dto.request;
 
 import java.time.LocalDate;
 
