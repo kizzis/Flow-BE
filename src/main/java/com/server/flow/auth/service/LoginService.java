@@ -8,6 +8,7 @@ import com.server.flow.auth.jwt.service.dto.AuthResponse;
 import com.server.flow.auth.service.dto.LoginRequest;
 import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.employee.entity.Employee;
+import com.server.flow.employee.entity.enums.Role;
 import com.server.flow.employee.repository.EmployeeRepository;
 
 import jakarta.validation.Valid;
@@ -24,17 +25,14 @@ public class LoginService {
 		Employee employee = employeeRepository.findByEmployeeNumber(request.employeeNumber())
 			.orElseThrow(() -> new IllegalArgumentException(ExceptionConstants.UNREGISTERED_EMPLOYEE_MESSAGE));
 
-		String encodedPassword = passwordEncoder.encode(employee.getPassword());
-		employee.changePassword(encodedPassword);
-
-		validatePasswordMatch(request.password(), employee);
+		if (isMismatchPassword(request.password(), employee)) {
+			throw new IllegalArgumentException(ExceptionConstants.MISMATCH_PASSWORD_MESSAGE);
+		}
 
 		return tokenService.generateToken(employee);
 	}
 
-	private void validatePasswordMatch(String password, Employee employee) {
-		if (!passwordEncoder.matches(password, employee.getPassword())) {
-			throw new IllegalArgumentException(ExceptionConstants.MISMATCH_PASSWORD_MESSAGE);
-		}
+	private boolean isMismatchPassword(String rawPassword, Employee employee) {
+		return employee.getRole() == Role.EMPLOYEE && !passwordEncoder.matches(rawPassword, employee.getPassword());
 	}
 }

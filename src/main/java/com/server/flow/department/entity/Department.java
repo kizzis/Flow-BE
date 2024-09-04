@@ -1,4 +1,4 @@
-package com.server.flow.employee.entity;
+package com.server.flow.department.entity;
 
 import com.server.flow.common.entity.BaseTimeEntity;
 
@@ -25,4 +25,8 @@ public class Department extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private String departmentName;
+
+	public static Department from(String departmentName) {
+		return Department.builder().departmentName(departmentName).build();
+	}
 }

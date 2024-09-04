@@ -10,4 +10,8 @@ import com.server.flow.employee.entity.Employee;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	Optional<Employee> findByEmployeeNumber(String employeeNumber);
+
+	Optional<Employee> findByName(String employeeName);
+
+	boolean existsByEmployeeNumber(String employeeNumber);
 }

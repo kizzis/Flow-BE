@@ -1,4 +1,4 @@
-package com.server.flow.employee.entity;
+package com.server.flow.position.entity;
 
 import com.server.flow.common.entity.BaseTimeEntity;
 
@@ -25,4 +25,8 @@ public class Position extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private String positionName;
+
+	public static Position from(String positionName) {
+		return Position.builder().positionName(positionName).build();
+	}
 }

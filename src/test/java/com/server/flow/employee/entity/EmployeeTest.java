@@ -9,6 +9,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.server.flow.department.entity.Department;
+import com.server.flow.position.entity.Position;
+
 import jakarta.persistence.EntityManager;
 
 @ActiveProfiles("local")
