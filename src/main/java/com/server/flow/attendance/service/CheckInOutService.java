@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.server.flow.attendance.entity.Attendance;
 import com.server.flow.attendance.repository.AttendanceRepository;
 import com.server.flow.attendance.service.dto.request.CheckInRequest;
+import com.server.flow.attendance.service.dto.request.CheckOutRequest;
 import com.server.flow.attendance.service.dto.response.CheckInResponse;
+import com.server.flow.attendance.service.dto.response.CheckOutResponse;
 import com.server.flow.common.constants.AttendanceConstants;
 import com.server.flow.common.constants.EmployeeConstants;
 import com.server.flow.employee.entity.Employee;
@@ -37,19 +39,19 @@ public class CheckInOutService {
 		return CheckInResponse.from(attendance);
 	}
 
-	// public CheckOutResponse checkOut(Long employeeId, CheckOutRequest request) {
-	// 	Attendance foundAttendance = attendanceRepository.findAttendance(request.attendanceId(), employeeId)
-	// 		.orElseThrow(
-	// 			() -> new IllegalArgumentException(AttendanceConstants.NOT_FOUND_EMPLOYEE_SPECIFIC_ATTENDANCE_MESSAGE));
-	//
-	// 	validateAttendanceDateMatch(foundAttendance.getAttendanceDate(), request.attendanceDate());
-	//
-	// 	foundAttendance.changeCheckOutTime(request.checkOutTime());
-	//
-	// 	attendanceRepository.save(foundAttendance);
-	//
-	// 	return CheckOutResponse.from(foundAttendance);
-	// }
+	public CheckOutResponse checkOut(Long employeeId, CheckOutRequest request) {
+		Attendance foundAttendance = attendanceRepository.findAttendance(request.attendanceId(), employeeId)
+			.orElseThrow(
+				() -> new IllegalArgumentException(AttendanceConstants.NOT_FOUND_EMPLOYEE_SPECIFIC_ATTENDANCE_MESSAGE));
+
+		validateAttendanceDateMatch(foundAttendance.getAttendanceDate(), request.attendanceDate());
+
+		foundAttendance.changeCheckOutTime(request.checkOutTime());
+
+		attendanceRepository.save(foundAttendance);
+
+		return CheckOutResponse.from(foundAttendance);
+	}
 
 	private void validateCheckInAttendanceExists(Long employeeId, LocalDate attendanceDate) {
 		if (attendanceRepository.existsAttendance(employeeId, attendanceDate)) {
@@ -59,11 +61,11 @@ public class CheckInOutService {
 		}
 	}
 
-	// private void validateAttendanceDateMatch(LocalDate savedAttendanceDate, LocalDate attendanceDate) {
-	// 	if (!savedAttendanceDate.equals(attendanceDate)) {
-	// 		log.error("validateAttendanceDateMatch: mismatch attendance date savedAttendanceDate={} attendanceDate={}",
-	// 			savedAttendanceDate, attendanceDate);
-	// 		throw new IllegalArgumentException(AttendanceConstants.MISMATCHED_ATTENDANCE_DATE_MESSAGE);
-	// 	}
-	// }
+	private void validateAttendanceDateMatch(LocalDate savedAttendanceDate, LocalDate attendanceDate) {
+		if (!savedAttendanceDate.equals(attendanceDate)) {
+			log.error("validateAttendanceDateMatch: mismatch attendance date savedAttendanceDate={} attendanceDate={}",
+				savedAttendanceDate, attendanceDate);
+			throw new IllegalArgumentException(AttendanceConstants.MISMATCHED_ATTENDANCE_DATE_MESSAGE);
+		}
+	}
 }

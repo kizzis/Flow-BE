@@ -66,11 +66,11 @@ public class Attendance extends BaseTimeEntity {
 			.build();
 	}
 
-	// public void changeCheckOutTime(LocalTime checkOutTime) {
-	// 	this.checkOutTime = checkOutTime;
-	//
-	// 	if (checkOutTime != null) {
-	// 		this.status = AttendanceStatus.LEAVE_WORK;
-	// 	}
-	// }
+	public void changeCheckOutTime(LocalTime checkOutTime) {
+		this.checkOutTime = checkOutTime;
+
+		if (checkOutTime != null) {
+			this.status = AttendanceStatus.LEAVE_WORK;
+		}
+	}
 }
