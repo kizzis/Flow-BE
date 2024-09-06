@@ -16,7 +16,7 @@ public record CheckOutResponse(
 			attendance.getId(),
 			attendance.getAttendanceDate(),
 			attendance.getCheckOutTime(),
-			attendance.getStatus().toString()
+			attendance.getStatus().getDescription()
 		);
 	}
 }
