@@ -31,6 +31,7 @@ public class CheckInOutService {
 		Employee foundEmployee = employeeRepository.findById(employeeId)
 			.orElseThrow(() -> new IllegalArgumentException(EmployeeConstants.NOT_FOUND_EMPLOYEE_MESSAGE));
 
+		validateAttendanceDateIsToday(request.attendanceDate());
 		validateCheckInAttendanceExists(employeeId, request.attendanceDate());
 
 		Attendance attendance = Attendance.of(foundEmployee, request.attendanceDate(), request.checkInTime());
@@ -44,6 +45,7 @@ public class CheckInOutService {
 			.orElseThrow(
 				() -> new IllegalArgumentException(AttendanceConstants.NOT_FOUND_EMPLOYEE_SPECIFIC_ATTENDANCE_MESSAGE));
 
+		validateAttendanceDateIsToday(request.attendanceDate());
 		validateAttendanceDateMatch(foundAttendance.getAttendanceDate(), request.attendanceDate());
 
 		foundAttendance.changeCheckOutTime(request.checkOutTime());
@@ -51,6 +53,12 @@ public class CheckInOutService {
 		attendanceRepository.save(foundAttendance);
 
 		return CheckOutResponse.from(foundAttendance);
+	}
+
+	private void validateAttendanceDateIsToday(LocalDate attendanceDate) {
+		if (!attendanceDate.isEqual(LocalDate.now())) {
+			throw new IllegalArgumentException(AttendanceConstants.MISMATCH_ATTENDANCE_DATE_MESSAGE);
+		}
 	}
 
 	private void validateCheckInAttendanceExists(Long employeeId, LocalDate attendanceDate) {
