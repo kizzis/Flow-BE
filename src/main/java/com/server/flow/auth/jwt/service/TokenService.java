@@ -26,7 +26,7 @@ public class TokenService {
 		return AuthResponse.of(
 			employee.getId(),
 			employee.getEmployeeNumber(),
-			employee.getRole(),
+			employee.getRoleTypes(),
 			accessToken,
 			refreshToken
 		);

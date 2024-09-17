@@ -3,6 +3,8 @@ package com.server.flow.employee.service.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.server.flow.employee.entity.enums.RoleType;
+
 public record EmployeeOverviewResponse(
 	Long employeeId,
 	String employeeNumber,
@@ -10,7 +12,7 @@ public record EmployeeOverviewResponse(
 	String department,
 	String position,
 	LocalDate joinDate,
-	List<String> role
+	List<RoleType> roles
 ) {
 	public static EmployeeOverviewResponse of(
 		Long employeeId,
@@ -19,7 +21,7 @@ public record EmployeeOverviewResponse(
 		String department,
 		String position,
 		LocalDate joinDate,
-		String role
+		List<RoleType> roles
 	) {
 		return new EmployeeOverviewResponse(
 			employeeId,
@@ -28,7 +30,7 @@ public record EmployeeOverviewResponse(
 			department,
 			position,
 			joinDate,
-			List.of(role)
+			roles
 		);
 	}
 }

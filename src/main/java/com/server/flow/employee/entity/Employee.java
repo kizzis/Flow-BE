@@ -1,22 +1,22 @@
 package com.server.flow.employee.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.server.flow.common.entity.BaseTimeEntity;
 import com.server.flow.department.entity.Department;
-import com.server.flow.employee.entity.enums.Role;
+import com.server.flow.employee.entity.enums.RoleType;
 import com.server.flow.position.entity.Position;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,8 +50,8 @@ public class Employee extends BaseTimeEntity {
 
 	private LocalDate joinDate;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
+	@OneToMany(mappedBy = "employee")
+	private List<EmployeeRole> employeeRoles;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "department_id")
@@ -69,10 +69,15 @@ public class Employee extends BaseTimeEntity {
 		this.password = encodedPassword;
 		this.department = department;
 		this.position = position;
-		this.role = Role.EMPLOYEE;
 	}
 
 	public void changePassword(String encodedPassword) {
 		this.password = encodedPassword;
+	}
+
+	public List<RoleType> getRoleTypes() {
+		return employeeRoles.stream()
+			.map(role -> role.getRole().getRoleType())
+			.toList();
 	}
 }

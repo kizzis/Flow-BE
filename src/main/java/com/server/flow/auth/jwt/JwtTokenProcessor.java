@@ -1,7 +1,9 @@
 package com.server.flow.auth.jwt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -11,7 +13,7 @@ import com.server.flow.auth.jwt.dto.JwtPayloadResponse;
 import com.server.flow.common.constants.AuthConstants;
 import com.server.flow.common.constants.TokenConstants;
 import com.server.flow.employee.entity.Employee;
-import com.server.flow.employee.entity.enums.Role;
+import com.server.flow.employee.entity.enums.RoleType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -78,6 +80,10 @@ public class JwtTokenProcessor {
 	private String generateToken(Employee employee, TokenType tokenType) {
 		Date now = new Date();
 		SecretKeySpec secretKeySpec = getSecretKeySpec(tokenType);
+		
+		List<RoleType> roleTypes = employee.getEmployeeRoles().stream()
+			.map(employeeRole -> employeeRole.getRole().getRoleType())
+			.toList();
 
 		return Jwts.builder()
 			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -85,7 +91,7 @@ public class JwtTokenProcessor {
 			.setExpiration(new Date(now.getTime() + jwtProperties.getAccessExpiresIn()))
 			.claim(AuthConstants.EMPLOYEE_ID, employee.getId())
 			.claim(AuthConstants.EMPLOYEE_NUMBER, employee.getEmployeeNumber())
-			.claim(AuthConstants.ROLE, employee.getRole())
+			.claim(AuthConstants.ROLES, roleTypes)
 			.signWith(secretKeySpec, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -103,10 +109,20 @@ public class JwtTokenProcessor {
 
 		Long employeeId = claims.get(AuthConstants.EMPLOYEE_ID, Long.class);
 		String employeeNumber = claims.get(AuthConstants.EMPLOYEE_NUMBER, String.class);
-		String roleType = claims.get(AuthConstants.ROLE, String.class);
-		Role role = Role.valueOf(roleType);
 
-		return new JwtPayloadResponse(employeeId, employeeNumber, role);
+		List<?> roleRaw = claims.get(AuthConstants.ROLES, List.class);
+		List<RoleType> roleTypes = new ArrayList<>();
+
+		if (roleRaw != null) {
+			try {
+				roleTypes = roleRaw.stream()
+					.map(role -> RoleType.valueOf(role.toString()))
+					.toList();
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Invalid role found in JWT");
+			}
+		}
+		return new JwtPayloadResponse(employeeId, employeeNumber, roleTypes);
 	}
 
 	public enum TokenType {

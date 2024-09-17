@@ -11,7 +11,12 @@ import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.department.entity.Department;
 import com.server.flow.department.service.DepartmentAddService;
 import com.server.flow.employee.entity.Employee;
+import com.server.flow.employee.entity.EmployeeRole;
+import com.server.flow.employee.entity.Role;
+import com.server.flow.employee.entity.enums.RoleType;
 import com.server.flow.employee.repository.EmployeeRepository;
+import com.server.flow.employee.repository.EmployeeRoleRepository;
+import com.server.flow.employee.repository.RoleRepository;
 import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.position.entity.Position;
 import com.server.flow.position.service.PositionAddService;
@@ -23,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class EmployeeAddService {
 	private final EmployeeRepository employeeRepository;
+	private final EmployeeRoleRepository employeeRoleRepository;
+	private final RoleRepository roleRepository;
 	private final DepartmentAddService departmentAddService;
 	private final PositionAddService positionAddService;
 	private final PasswordEncoder passwordEncoder;
@@ -38,8 +45,11 @@ public class EmployeeAddService {
 
 		Employee employee = request.toEmployee();
 		employee.addEmployeeInfo(encodedPassword, department, position);
-
 		employeeRepository.save(employee);
+		
+		Role role = findOrCreateEmployeeRole();
+		EmployeeRole employeeRole = EmployeeRole.of(employee, role);
+		employeeRoleRepository.save(employeeRole);
 	}
 
 	private void validateEmployeeNumber(String employeeNumber) {
@@ -51,5 +61,10 @@ public class EmployeeAddService {
 	private String formatJointDateToString(LocalDate joinDate) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		return joinDate.format(formatter);
+	}
+
+	private Role findOrCreateEmployeeRole() {
+		return roleRepository.findByRoleType(RoleType.EMPLOYEE)
+			.orElseGet(() -> roleRepository.save(Role.createEmployeeRole()));
 	}
 }

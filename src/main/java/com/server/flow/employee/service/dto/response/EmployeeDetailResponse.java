@@ -11,7 +11,7 @@ public record EmployeeDetailResponse(EmployeeOverviewResponse employeeOverviewRe
 			employee.getDepartment().getDepartmentName(),
 			employee.getPosition().getPositionName(),
 			employee.getJoinDate(),
-			employee.getRole().toString()
+			employee.getRoleTypes()
 		);
 
 		return new EmployeeDetailResponse(employeeOverviewResponse);
