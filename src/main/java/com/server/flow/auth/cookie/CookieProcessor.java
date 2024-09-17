@@ -3,6 +3,7 @@ package com.server.flow.auth.cookie;
 import org.springframework.stereotype.Component;
 
 import com.server.flow.auth.jwt.JwtProperties;
+import com.server.flow.common.constants.TokenConstants;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class CookieProcessor {
 				}
 			}
 		}
-		throw new IllegalArgumentException("Request Header does not contain access token");
+		throw new IllegalArgumentException(TokenConstants.EXCLUDED_ACCESS_TOKEN_ERROR_MESSAGE);
 	}
 
 	private void addCookie(

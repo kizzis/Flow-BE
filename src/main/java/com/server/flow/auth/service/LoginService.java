@@ -8,7 +8,7 @@ import com.server.flow.auth.jwt.service.dto.AuthResponse;
 import com.server.flow.auth.service.dto.LoginRequest;
 import com.server.flow.common.constants.ExceptionConstants;
 import com.server.flow.employee.entity.Employee;
-import com.server.flow.employee.entity.enums.Role;
+import com.server.flow.employee.entity.enums.RoleType;
 import com.server.flow.employee.repository.EmployeeRepository;
 
 import jakarta.validation.Valid;
@@ -33,6 +33,7 @@ public class LoginService {
 	}
 
 	private boolean isMismatchPassword(String rawPassword, Employee employee) {
-		return employee.getRole() == Role.EMPLOYEE && !passwordEncoder.matches(rawPassword, employee.getPassword());
+		return employee.getEmployeeRoles().stream().noneMatch(role -> role.getRole().getRoleType() != RoleType.EMPLOYEE)
+			&& !passwordEncoder.matches(rawPassword, employee.getPassword());
 	}
 }

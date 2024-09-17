@@ -1,10 +1,12 @@
 package com.server.flow.auth.jwt.dto;
 
-import com.server.flow.employee.entity.enums.Role;
+import java.util.List;
+
+import com.server.flow.employee.entity.enums.RoleType;
 
 public record JwtPayloadResponse(
 	Long employeeId,
 	String employeeNumber,
-	Role role
+	List<RoleType> roleType
 ) {
 }

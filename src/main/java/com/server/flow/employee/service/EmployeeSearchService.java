@@ -38,7 +38,7 @@ public class EmployeeSearchService {
 				employee.getDepartment().getDepartmentName(),
 				employee.getPosition().getPositionName(),
 				employee.getJoinDate(),
-				employee.getRole().getValue()
+				employee.getRoleTypes()
 			));
 
 		return EmployeeOverviewsResponse.from(

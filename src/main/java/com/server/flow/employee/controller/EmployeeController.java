@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.flow.auth.security.EmployeeAuthorizationUtil;
+import com.server.flow.auth.security.dto.EmployeeBasicInfo;
 import com.server.flow.common.constants.EmployeeConstants;
 import com.server.flow.common.response.ApiResponse;
 import com.server.flow.employee.service.EmployeeAddService;
 import com.server.flow.employee.service.EmployeeSearchService;
 import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.employee.service.dto.response.EmployeeDetailResponse;
-import com.server.flow.employee.service.dto.response.EmployeeIdResponse;
 import com.server.flow.employee.service.dto.response.EmployeeOverviewsResponse;
 
 import jakarta.validation.Valid;
@@ -35,10 +35,9 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/api/employees/me")
-	public ApiResponse<EmployeeIdResponse> getEmployeeId() {
-		Long employeeId = EmployeeAuthorizationUtil.getLoginEmployeeId();
-		return ApiResponse.success(EmployeeIdResponse.from(employeeId),
-			EmployeeConstants.EMPLOYEEID_SUCCESS_COMPLETED_MESSAGE);
+	public ApiResponse<EmployeeBasicInfo> getEmployeeBasicInfo() {
+		EmployeeBasicInfo employeeBasicInfo = EmployeeAuthorizationUtil.getEmployeeBasicInfo();
+		return ApiResponse.success(employeeBasicInfo, EmployeeConstants.EMPLOYEEID_SUCCESS_COMPLETED_MESSAGE);
 	}
 
 	@GetMapping("/api/admin/employees/search")
