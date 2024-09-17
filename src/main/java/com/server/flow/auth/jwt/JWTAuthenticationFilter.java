@@ -2,6 +2,7 @@ package com.server.flow.auth.jwt;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,31 +42,41 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws ServletException, IOException {
-		if (isMatchedWhiteList(request.getRequestURI())) {
+		try {
+			if (isMatchedWhiteList(request.getRequestURI())) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+
+			if (request.getMethod().equalsIgnoreCase(AuthConstants.HTTP_OPTIONS_METHOD)) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+
+			String jwtToken = cookieProcessor.extractCookie(request);
+			JwtPayloadResponse jwtPayloadResponse = jwtTokenProcessor.extractUserInfo(jwtToken);
+
+			UserDetails userDetails = principalDetailsService.loadUserByUsername(jwtPayloadResponse.employeeNumber());
+
+			if (userDetails != null) {
+				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+					userDetails, null, userDetails.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			}
+
 			filterChain.doFilter(request, response);
-			return;
+		} catch (Exception e) {
+			handleException(response, e.getMessage());
 		}
-
-		if (request.getMethod().equalsIgnoreCase(AuthConstants.HTTP_OPTIONS_METHOD)) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-		String jwtToken = cookieProcessor.extractCookie(request);
-		JwtPayloadResponse jwtPayloadResponse = jwtTokenProcessor.extractUserInfo(jwtToken);
-
-		UserDetails userDetails = principalDetailsService.loadUserByUsername(jwtPayloadResponse.employeeNumber());
-
-		if (userDetails != null) {
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-				userDetails, null, userDetails.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-		}
-
-		filterChain.doFilter(request, response);
 	}
 
 	private boolean isMatchedWhiteList(String requestURI) {
 		return PatternMatchUtils.simpleMatch(WHITELIST, requestURI);
+	}
+
+	private void handleException(HttpServletResponse response, String message) throws IOException {
+		response.setStatus(HttpStatus.BAD_REQUEST.value());
+		response.setContentType("application/json");
+		response.getWriter().write("filter_error: " + message);
 	}
 }

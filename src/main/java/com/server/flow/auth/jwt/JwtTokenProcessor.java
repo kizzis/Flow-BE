@@ -80,7 +80,7 @@ public class JwtTokenProcessor {
 	private String generateToken(Employee employee, TokenType tokenType) {
 		Date now = new Date();
 		SecretKeySpec secretKeySpec = getSecretKeySpec(tokenType);
-		
+
 		List<RoleType> roleTypes = employee.getEmployeeRoles().stream()
 			.map(employeeRole -> employeeRole.getRole().getRoleType())
 			.toList();
@@ -119,7 +119,7 @@ public class JwtTokenProcessor {
 					.map(role -> RoleType.valueOf(role.toString()))
 					.toList();
 			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Invalid role found in JWT");
+				throw new IllegalArgumentException(TokenConstants.INVALID_ROLE_FOUND_MESSAGE);
 			}
 		}
 		return new JwtPayloadResponse(employeeId, employeeNumber, roleTypes);
