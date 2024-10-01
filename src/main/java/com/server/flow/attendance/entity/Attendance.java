@@ -3,9 +3,7 @@ package com.server.flow.attendance.entity;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import java.time.temporal.ChronoUnit;
 
 import com.server.flow.attendance.entity.enums.AttendanceStatus;
 import com.server.flow.common.entity.BaseTimeEntity;
@@ -50,27 +48,43 @@ public class Attendance extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private AttendanceStatus status;
 
-	@Column(name = "work_time", columnDefinition = "INTERVAL DAY TO SECOND")
-	@JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
-	private Duration workTime;
+	@Column(name = "work_time")
+	private Long workTime;
 
-	@Column(name = "overtime", columnDefinition = "INTERVAL DAY TO SECOND")
-	private Duration overtime;
+	@Column(name = "overtime")
+	private Long overtime;
 
-	public static Attendance of(Employee employee, LocalDate attendanceDate, LocalTime checkInTime) {
+	public static Attendance of(Employee employee, LocalDate attendanceDate) {
+		LocalTime checkInTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+		AttendanceStatus status = AttendanceStatus.getCheckInStatus(checkInTime);
+
 		return Attendance.builder()
 			.employee(employee)
 			.attendanceDate(attendanceDate)
 			.checkInTime(checkInTime)
-			.status(AttendanceStatus.WORK)
+			.status(status)
 			.build();
 	}
 
-	public void changeCheckOutTime(LocalTime checkOutTime) {
-		this.checkOutTime = checkOutTime;
+	public void finalizeCheckOut() {
+		changeCheckOutTime();
+		changeWorkTime();
+	}
 
-		if (checkOutTime != null) {
-			this.status = AttendanceStatus.LEAVE_WORK;
+	private void changeCheckOutTime() {
+		if (this.status != AttendanceStatus.VACATION || this.status != AttendanceStatus.ABSENCE) {
+			LocalTime checkOutTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+			AttendanceStatus status = AttendanceStatus.getCheckOutStatus(checkOutTime);
+
+			this.checkOutTime = checkOutTime;
+			this.status = status;
+		}
+	}
+
+	private void changeWorkTime() {
+		if (this.checkInTime != null && this.checkOutTime != null) {
+			long totalSeconds = Duration.between(this.checkInTime, this.checkOutTime).getSeconds();
+			this.workTime = totalSeconds;
 		}
 	}
 }
