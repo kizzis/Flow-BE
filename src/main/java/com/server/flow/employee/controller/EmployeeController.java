@@ -1,5 +1,7 @@
 package com.server.flow.employee.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +19,7 @@ import com.server.flow.employee.service.EmployeeAddService;
 import com.server.flow.employee.service.EmployeeSearchService;
 import com.server.flow.employee.service.dto.request.AddEmployeeRequest;
 import com.server.flow.employee.service.dto.response.EmployeeDetailResponse;
+import com.server.flow.employee.service.dto.response.EmployeeDetailsResponse;
 import com.server.flow.employee.service.dto.response.EmployeeOverviewsResponse;
 
 import jakarta.validation.Valid;
@@ -41,9 +44,10 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/api/admin/employees/search")
-	public ApiResponse<EmployeeDetailResponse> searchEmployee(@RequestParam String name) {
-		EmployeeDetailResponse employeeDetailResponse = employeeSearchService.searchEmployee(name);
-		return ApiResponse.success(employeeDetailResponse, EmployeeConstants.EMPLOYEE_SEARCH_COMPLETED_MESSAGE);
+	public ApiResponse<EmployeeDetailsResponse> searchEmployee(@RequestParam String name) {
+		List<EmployeeDetailResponse> employeeDetailResponses = employeeSearchService.searchEmployee(name);
+		return ApiResponse.success(EmployeeDetailsResponse.of(employeeDetailResponses),
+			EmployeeConstants.EMPLOYEE_SEARCH_COMPLETED_MESSAGE);
 	}
 
 	@GetMapping("/api/admin/employees")

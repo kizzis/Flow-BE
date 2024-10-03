@@ -43,26 +43,38 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain
 	) throws ServletException, IOException {
 		try {
+			System.out.println("isMatchedWhiteList Start");
 			if (isMatchedWhiteList(request.getRequestURI())) {
 				filterChain.doFilter(request, response);
 				return;
 			}
+			System.out.println("isMatchedWhiteList End");
 
+			System.out.println("Options method Start");
 			if (request.getMethod().equalsIgnoreCase(AuthConstants.HTTP_OPTIONS_METHOD)) {
 				filterChain.doFilter(request, response);
 				return;
 			}
+			System.out.println("Options method End");
 
+			System.out.println("JWTAuthenticationFilter.doFilterInternal extractCookie Start");
 			String jwtToken = cookieProcessor.extractCookie(request);
+			System.out.println("JWTAuthenticationFilter.doFilterInternal extractCookie End");
+			System.out.println("JWTAuthenticationFilter.doFilterInternal extractUsersInfo Start");
 			JwtPayloadResponse jwtPayloadResponse = jwtTokenProcessor.extractUserInfo(jwtToken);
+			System.out.println("JWTAuthenticationFilter.doFilterInternal extractUsersInfo End");
 
+			System.out.println("JWTAuthenticationFilter.doFilterInternal loadUserByUsername Start");
 			UserDetails userDetails = principalDetailsService.loadUserByUsername(jwtPayloadResponse.employeeNumber());
+			System.out.println("JWTAuthenticationFilter.doFilterInternal loadUserByUsername End");
 
+			System.out.println("JWTAuthenticationFilter.doFilterInternal UsernamePasswordAuthenticationToken  Start");
 			if (userDetails != null) {
 				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 					userDetails, null, userDetails.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			}
+			System.out.println("JWTAuthenticationFilter.doFilterInternal UsernamePasswordAuthenticationToken  End");
 
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {

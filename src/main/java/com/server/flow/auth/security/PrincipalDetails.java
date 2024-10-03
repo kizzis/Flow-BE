@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.server.flow.auth.security.dto.EmployeePrincipalDetails;
+import com.server.flow.common.constants.AuthConstants;
 import com.server.flow.employee.entity.enums.RoleType;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class PrincipalDetails implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		employee.roleTypes().forEach(roleType ->
-			authorities.add(new SimpleGrantedAuthority(roleType.getValue())));
+			authorities.add(new SimpleGrantedAuthority(AuthConstants.ROLE_ + roleType.getValue())));
 		return authorities;
 	}
 

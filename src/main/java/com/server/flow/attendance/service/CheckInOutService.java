@@ -34,12 +34,13 @@ public class CheckInOutService {
 		validateAttendanceDateIsToday(request.attendanceDate());
 		validateCheckInAttendanceExists(employeeId, request.attendanceDate());
 
-		Attendance attendance = Attendance.of(foundEmployee, request.attendanceDate(), request.checkInTime());
+		Attendance attendance = Attendance.of(foundEmployee, request.attendanceDate());
 		attendanceRepository.save(attendance);
 
 		return CheckInResponse.from(attendance);
 	}
 
+	// todo. 퇴근체크 API에 근무시간 정보도 포함
 	public CheckOutResponse checkOut(Long employeeId, CheckOutRequest request) {
 		Attendance foundAttendance = attendanceRepository.findAttendance(request.attendanceId(), employeeId)
 			.orElseThrow(
@@ -48,7 +49,8 @@ public class CheckInOutService {
 		validateAttendanceDateIsToday(request.attendanceDate());
 		validateAttendanceDateMatch(foundAttendance.getAttendanceDate(), request.attendanceDate());
 
-		foundAttendance.changeCheckOutTime(request.checkOutTime());
+		// todo. 휴가나 결근이면 status 변경X
+		foundAttendance.finalizeCheckOut();
 
 		attendanceRepository.save(foundAttendance);
 

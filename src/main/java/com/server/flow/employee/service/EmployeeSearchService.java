@@ -1,5 +1,7 @@
 package com.server.flow.employee.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeSearchService {
 	private final EmployeeRepository employeeRepository;
 
-	public EmployeeDetailResponse searchEmployee(String name) {
-		Employee foundEmployee = employeeRepository.findByName(name)
+	public List<EmployeeDetailResponse> searchEmployee(String name) {
+		List<Employee> employees = employeeRepository.findByNameEmployees(name)
 			.orElseThrow(() -> new IllegalArgumentException(ExceptionConstants.NOT_EXISTED_EMPLOYEE_MESSAGE));
 
-		return EmployeeDetailResponse.from(foundEmployee);
+		return employees.stream()
+			.map(EmployeeDetailResponse::from)
+			.toList();
 	}
 
 	public EmployeeOverviewsResponse searchEmployees(Pageable pageable) {
